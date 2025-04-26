@@ -6,9 +6,16 @@ def parse_arguments():
     commands = parser.add_subparsers(dest="command", required=True, metavar="commands")
     
     # init
-    init_parser = commands.add_parser("init", help="initialize a giggity repo")
+    init_parser = commands.add_parser("init", help="initialize a giggity repository")
     init_parser.add_argument("directory", nargs='?', default=".", help="name of the directory to initialize Giggity")
     init_parser.set_defaults(func=giggity.init)
+    
+    # clone (slightly different from git clone)
+    clone_parser = commands.add_parser("clone", help="clone a repository")
+    clone_parser.add_argument("link", help="link of the repository")
+    clone_parser.add_argument("directory", nargs='?', help="name of the cloned directory")
+    clone_parser.add_argument("--branch", default="main", help="name of the branch")
+    clone_parser.set_defaults(func=giggity.clone)
     
     # hash-object
     hashobject_parser = commands.add_parser("hash-object", help="computes the unique hash key of the content")
