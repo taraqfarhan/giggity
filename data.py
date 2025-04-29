@@ -1,13 +1,12 @@
+# This module contains the actual implementation of the commands
+
 import os
-import base64
+from base64 import b64decode
 import zlib
 from hashlib import sha1
-try: import requests 
-except ModuleNotFoundError:
-    print("You need to install `requests` module via pip (you may need virtual enviroment)\nRun the following commands")
-    print("\npython3 -m venv venv && source venv/bin/activate")
-    print("pip install requests")
-    exit(1)
+from urllib.request import urlopen
+from urllib.error import HTTPError
+from json import loads
 
 
 def read_file(path, compressed=False):
@@ -37,19 +36,21 @@ def init(path=os.getcwd()):
 # giggity clone [--branch=<name>] <repo link> [directory]
 def clone(branch, link, dir):
     # link format: https://github.com/tarqfarhan/ggl or https://github.com/taraqfarhan/ggl.git
-    parts = link.split("/")
-    OWNER = parts[3]
-    REPO = parts[4].split('.')[0]
-    # TOKEN = r'' # your ACCESS_TOKEN
+    parts = link.split("/") # splitting the `link` string using '\' as divider
+    OWNER = parts[-2] 
+    REPO = parts[-1].split('.')[0] # 
     
     if dir is None: DIR = f"{os.path.join(os.getcwd(), REPO)}"
     else: DIR = f"{os.path.join(os.getcwd(), dir)}"
 
     # Step 1: Fetch the full tree
     tree_url = f"https://api.github.com/repos/{OWNER}/{REPO}/git/trees/{branch}?recursive=1"
-    # response = requests.get(tree_url, headers={'Authorization': f'access_token {TOKEN}'})
-    response = requests.get(tree_url)
-    data = response.json()
+    try:
+        response = urlopen(tree_url)
+        data = loads(response.read().decode("utf-8"))
+    except HTTPError as e: 
+        print(f'HTTP {e.code} error: {e.reason}')
+        exit(1)
     
     # Step 2: Process each item
     try:
@@ -63,24 +64,21 @@ def clone(branch, link, dir):
                 os.chdir(DIR)
 
             path = item['path']
-            # folder = os.path.dirname(path)
             if item['type'] == 'tree':
-                # if folder: os.makedirs(folder, exist_ok=True) # Only create folder if folder is not empty
                 os.makedirs(path, exist_ok=True) 
             elif item['type'] == 'blob':
                 blob_url = item['url']
                 try: 
-                    # blob_resp = requests.get(blob_url, headers={"Authorization": f"access_token {TOKEN}"})
-                    blob_resp = requests.get(blob_url)
-                    blob_data = blob_resp.json()
-                    file_content = base64.b64decode(blob_data['content'])
-                
-                    # folder = os.path.dirname(path)
-                    # if folder: os.makedirs(folder, exist_ok=True)
+                    blob_resp = urlopen(blob_url)
+                    blob_data = loads(blob_resp.read().decode("utf-8"))
+                    file_content = b64decode(blob_data['content'])
 
                     with open(path, 'wb') as f: f.write(file_content)
                 except KeyError: 
                     print(f"Response to {blob_url} Key Error")
+                    exit(1)
+                except HTTPError as e:
+                    print(f'HTTP {e.code} error: {e.reason}')
                     exit(1)
         print("Cloning completed")
     except KeyboardInterrupt: 
@@ -90,10 +88,6 @@ def clone(branch, link, dir):
         print(f"Response to {tree_url} Key Error")
         print(data['message'])
         exit(1)
-        # if ("Not Found" in data['message']):
-            # print(f"fatal: Remote branch {branch} not found in upstream origin")
-            # exit(1)
-        # else: print(data['message'])
 
 
 # giggity hash-object [-w] <file>

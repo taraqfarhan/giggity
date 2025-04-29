@@ -1,12 +1,14 @@
 #!/Users/taraqfarhan/Desktop/buildnlearn/Projects/giggity/venv/bin/python3  # source to your interpreter 
 
+# Main file (entry point of the program)
+
 import data, arguments
 
 def main():
     args = arguments.parse_arguments()
     
-    # repository check: only allow `init` if there's no .giggity directory
-    if args.func.__name__ != "init":
+    # repository check: only allow `init` and `clone` if there's no .giggity directory
+    if args.func.__name__ not in ("init", "clone"):
         if not data.os.path.isdir(data.os.path.join(data.os.getcwd(), ".giggity")):
             print("fatal: not a giggity repository\ninitialize the repo first using giggity init [dir]")
             exit(1)

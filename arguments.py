@@ -1,3 +1,5 @@
+# This module handles command line arguments and options
+
 import argparse
 import giggity
 
