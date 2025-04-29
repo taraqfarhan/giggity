@@ -22,15 +22,21 @@ giggity clone -h  # help about a specific command
 ## Files
 1. giggity.py (the main file, entry point of the program)
 2. arguments.py (handles command line arguments and options)
-3. data.py (actual implementation of the commands)
+3. porcelain.py (actual implementation of the porcelain commands)
+4. plumbing.py (actual implementation of the plumbing commands)
+5. misc.py (helper miscellaneous functions)
  
- > Read the comments (docstrings) from each file to understand the program easily. I will encourage you to follow the order i've mentioned, but you can choose not to follow the order.
+ > Read the comments (docstrings) from each file to understand the program easily.
 
 ## Commands implemented
 ##### Porcelain Commands (Higher level: User Friendly)
 ```
-clone
 init
+clone
+add
+commit
+status
+log
 ```
 ##### Plumbing Commnads (Lower Level: For Nerds)
 ```

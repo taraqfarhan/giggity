@@ -1,28 +1,34 @@
-#!/Users/taraqfarhan/Desktop/buildnlearn/Projects/giggity/venv/bin/python3  # source to your interpreter 
+#!/usr/bin/env python3  # path to python3 interpreter
+# This is the main file (entry point of the program)
 
-# Main file (entry point of the program)
+# local modules arguments.py, procelain.py, plumbing.py and misc.py
+import arguments, porcelain, plumbing
+from misc import os
 
-import data, arguments
+
 
 def main():
     args = arguments.parse_arguments()
     
     # repository check: only allow `init` and `clone` if there's no .giggity directory
     if args.func.__name__ not in ("init", "clone"):
-        if not data.os.path.isdir(data.os.path.join(data.os.getcwd(), ".giggity")):
+        if not os.path.isdir(os.path.join(os.getcwd(), ".giggity")):
             print("fatal: not a giggity repository\ninitialize the repo first using giggity init [dir]")
             exit(1)
 
     args.func(args)        
 
-def init(args): data.init(args.directory)
+
+
+def init(args): porcelain.init(args.directory)
+def clone(args): porcelain.clone(args.branch, args.link, args.directory)
+
 def hash_object(args):
-    if (args.write): data.hash_object(args.file, write=True)
-    else: data.hash_object(args.file)
+    if (args.write): plumbing.hash_object(args.file, write=True)
+    else: plumbing.hash_object(args.file)
 def cat_file(args): 
-    if (args.print): print(data.cat_file(args.object, print=True))
-    elif (args.size): print(data.cat_file(args.object, size=True))
-    elif (args.type): print(data.cat_file(args.object, type=True))
-def clone(args): data.clone(args.branch, args.link, args.directory)
+    if (args.print): print(plumbing.cat_file(args.object, print=True))
+    elif (args.size): print(plumbing.cat_file(args.object, size=True))
+    elif (args.type): print(plumbing.cat_file(args.object, type=True))
 
 if __name__ == "__main__": main()
