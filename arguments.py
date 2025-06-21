@@ -4,7 +4,7 @@ import argparse
 import giggity
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="Git implementation in Python to learn Git in depth", prog='giggity', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(description="Git implementation in Python to undertand Git internals", prog='giggity', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     commands = parser.add_subparsers(dest="command", required=True, metavar="commands")
     
     # init

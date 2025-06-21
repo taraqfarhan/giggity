@@ -11,4 +11,6 @@ def read_file(path, compressed=False):
             with open(path, "rb") as file: return file.read()
         else:
             with open(path, "rb") as file: return zlib.decompress(file.read()) # returns utf-8 encoded data
-    else: print(f"fatal: could not open '{path}' for reading: No such file")
+    else: 
+        print(f"fatal: could not open '{path}' for reading: No such file")
+        exit(1)

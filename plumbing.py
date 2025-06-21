@@ -15,6 +15,9 @@ def hash_object(file_path, obj_type=b'blob', write=False):
     if (not os.path.exists(os.path.join(os.getcwd(), file_path))):
         print(f"fatal: no such file {os.getcwd()}/{file_path}")
         exit(1)
+    elif (os.path.isdir(os.path.join(os.getcwd(), file_path))):
+        print(f"fatal: unable to hash {file_path}, because it's a directory")
+        exit(1)
         
     contents_of_file = misc.read_file(file_path)
     size_of_file = str(len(contents_of_file)).encode("utf-8") # os.path.getsize('path/to/file')
@@ -40,16 +43,16 @@ def hash_object(file_path, obj_type=b'blob', write=False):
 
 
 # giggity <-p | -s | -t> <object hash>
-def cat_file(obj_id, print=False, size=False, type=False):
+def cat_file(obj_id, printing=False, size=False, type=False):
     file_path = os.path.join(os.getcwd(), ".giggity", "objects", f"{obj_id[:2]}", f"{obj_id[2:]}")
-
-    if (not os.path.exists(os.path.join(os.getcwd(), file_path))):
-        print(f"fatal: no such file {os.getcwd()}/{file_path}")
+    
+    if (not os.path.exists(file_path)):
+        print(f"fatal: no such file {file_path}")
         exit(1)
-
-    content =misc.read_file(file_path, compressed=True)
+        
+    content = misc.read_file(file_path, compressed=True)
     partitions = content.partition(b'\x00')
 
-    if print: return partitions[2].decode("utf-8")
+    if printing: return partitions[2].decode("utf-8")
     elif type: return partitions[0].decode("utf-8").split()[0]
     elif size: return partitions[0].decode("utf-8").split()[1]

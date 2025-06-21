@@ -27,7 +27,7 @@ def hash_object(args):
     if (args.write): plumbing.hash_object(args.file, write=True)
     else: plumbing.hash_object(args.file)
 def cat_file(args): 
-    if (args.print): print(plumbing.cat_file(args.object, print=True))
+    if (args.printing): print(plumbing.cat_file(args.object, printing=True))
     elif (args.size): print(plumbing.cat_file(args.object, size=True))
     elif (args.type): print(plumbing.cat_file(args.object, type=True))
 

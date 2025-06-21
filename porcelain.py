@@ -39,7 +39,7 @@ def clone(branch, link, dir):
     # link format: https://github.com/tarqfarhan/ggl or https://github.com/taraqfarhan/ggl.git
     parts = link.split("/") # splitting the `link` string using '\' as divider
     OWNER = parts[-2] 
-    REPO = parts[-1].split('.')[0] # 
+    REPO = parts[-1].split('.')[0] 
     
     if dir is None: DIR = f"{os.path.join(os.getcwd(), REPO)}"
     else: DIR = f"{os.path.join(os.getcwd(), dir)}"
@@ -65,8 +65,7 @@ def clone(branch, link, dir):
                 os.chdir(DIR)
 
             path = item['path']
-            if item['type'] == 'tree':
-                os.makedirs(path, exist_ok=True) 
+            if item['type'] == 'tree': os.makedirs(path, exist_ok=True) 
             elif item['type'] == 'blob':
                 blob_url = item['url']
                 try: 
